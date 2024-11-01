@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: blockchain_java
+hash:
+  difficulty_prefix: "000"
