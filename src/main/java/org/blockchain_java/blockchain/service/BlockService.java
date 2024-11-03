@@ -1,20 +1,22 @@
 package org.blockchain_java.blockchain.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.blockchain_java.blockchain.models.Block;
-import org.blockchain_java.blockchain.models.Transaction;
+import org.blockchain_java.blockchain.models.transaction.Transaction;
+import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
+import org.blockchain_java.blockchain.service.utxo.UTXOService;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class BlockService {
+    private final UTXOService utxoService;
 
     @SneakyThrows
     public String calculateBlockHash(Block block) {
@@ -36,8 +38,13 @@ public class BlockService {
         return buffer.toString();
     }
 
-    public Block createBlock(List<Block> chain, List<Transaction> transactions){
+    public Block createBlock(List<Block> chain, List<Transaction> transactions, Map<String, TransactionOutput> UTXO){
         Block newBlock;
+
+        for(Transaction transaction : transactions){
+            utxoService.removeSpentOutput(transaction, UTXO);
+            utxoService.addNewOutput(transaction, UTXO);
+        }
 
         if(chain.isEmpty()){
             newBlock = createGenesisBlock(transactions);
