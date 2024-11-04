@@ -1,7 +1,12 @@
 package org.blockchain_java.blockchain.service.transaction;
 
+import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
+import org.blockchain_java.blockchain.models.transaction.Transaction;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
 import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
+import org.blockchain_java.leveldb.service.LevelDBService;
+import org.iq80.leveldb.DB;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -10,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionOutputService {
+    private final DB levelDB;
+    private final Gson gson;
 
     public List<TransactionOutput> createOutputs(String fromAddress,
                                                  String toAddress,
                                                  BigDecimal amount,
-                                                 Map<String, TransactionOutput> UTXO,
                                                  List<TransactionInput> transactionInputs){
         BigDecimal amountInInputs = transactionInputs.stream()
                 .map(TransactionInput::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -23,8 +30,10 @@ public class TransactionOutputService {
 
         for(TransactionInput transactionInput : transactionInputs){
             String key = transactionInput.getHash()+":"+transactionInput.getOutput();
-            if(UTXO.containsKey(key)){
-                UTXO.get(key).setSpent(true);
+            if(levelDB.get(key.getBytes()) != null){
+                TransactionOutput transactionOutput = gson.fromJson(new String(levelDB.get(key.getBytes())), TransactionOutput.class);
+                transactionOutput.setSpent(true);
+                levelDB.put(key.getBytes(), gson.toJson(transactionOutput).getBytes());
             }
         }
 

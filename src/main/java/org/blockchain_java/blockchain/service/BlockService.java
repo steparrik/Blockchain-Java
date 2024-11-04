@@ -38,12 +38,12 @@ public class BlockService {
         return buffer.toString();
     }
 
-    public Block createBlock(List<Block> chain, List<Transaction> transactions, Map<String, TransactionOutput> UTXO){
+    public Block createBlock(List<Block> chain, List<Transaction> transactions){
         Block newBlock;
 
         for(Transaction transaction : transactions){
-            utxoService.removeSpentOutput(transaction, UTXO);
-            utxoService.addNewOutput(transaction, UTXO);
+            utxoService.removeSpentOutput(transaction);
+            utxoService.addNewOutput(transaction);
         }
 
         if(chain.isEmpty()){

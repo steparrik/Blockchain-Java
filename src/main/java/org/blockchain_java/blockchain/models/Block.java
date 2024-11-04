@@ -1,9 +1,6 @@
 package org.blockchain_java.blockchain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.blockchain_java.blockchain.models.transaction.Transaction;
 
 import java.util.Date;
