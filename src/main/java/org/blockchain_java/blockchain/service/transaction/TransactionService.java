@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.blockchain_java.blockchain.models.transaction.Transaction;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
 import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,10 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionService {
     private final TransactionInputService transactionInputService;
     private final TransactionOutputService transactionOutputService;
+
+    @Autowired
+    public TransactionService(TransactionInputService transactionInputService, TransactionOutputService transactionOutputService) {
+        this.transactionInputService = transactionInputService;
+        this.transactionOutputService = transactionOutputService;
+    }
+
 
     @SneakyThrows
     public String calculateTransactionHash(Transaction transaction) {

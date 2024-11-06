@@ -2,23 +2,28 @@ package org.blockchain_java.blockchain.service.transaction;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import org.blockchain_java.blockchain.models.transaction.Transaction;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
 import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
-import org.blockchain_java.leveldb.service.LevelDBService;
+import org.blockchain_java.blockchain.service.utxo.UtxoService;
 import org.iq80.leveldb.DB;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionOutputService {
-    private final DB levelDB;
+    private final UtxoService utxoService;
     private final Gson gson;
+
+    @Autowired
+    public TransactionOutputService(UtxoService utxoService, Gson gson) {
+        this.utxoService = utxoService;
+        this.gson = gson;
+    }
 
     public List<TransactionOutput> createOutputs(String fromAddress,
                                                  String toAddress,
@@ -30,10 +35,10 @@ public class TransactionOutputService {
 
         for(TransactionInput transactionInput : transactionInputs){
             String key = transactionInput.getHash()+":"+transactionInput.getOutput();
-            if(levelDB.get(key.getBytes()) != null){
-                TransactionOutput transactionOutput = gson.fromJson(new String(levelDB.get(key.getBytes())), TransactionOutput.class);
+            if(utxoService.get(key) != null){
+                TransactionOutput transactionOutput = gson.fromJson(new String(utxoService.get(key)), TransactionOutput.class);
                 transactionOutput.setSpent(true);
-                levelDB.put(key.getBytes(), gson.toJson(transactionOutput).getBytes());
+                utxoService.put(key, gson.toJson(transactionOutput));
             }
         }
 

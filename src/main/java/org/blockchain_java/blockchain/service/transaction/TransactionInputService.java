@@ -1,32 +1,37 @@
 package org.blockchain_java.blockchain.service.transaction;
 
 import com.google.gson.Gson;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
 import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
-import org.blockchain_java.leveldb.service.LevelDBService;
+import org.blockchain_java.blockchain.service.utxo.UtxoService;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionInputService {
-    private final DB levelDB;
+    private final UtxoService utxoService;
     private final Gson gson;
+
+    @Autowired
+    public TransactionInputService(UtxoService utxoService, Gson gson) {
+        this.utxoService = utxoService;
+        this.gson = gson;
+    }
 
     public List<TransactionInput> createInputs(String fromAddress, BigDecimal amount){
         List<TransactionInput> transactionInputs = new ArrayList<>();
         BigDecimal amountInUTXO  = BigDecimal.ZERO;
 
-        DBIterator iterator = levelDB.iterator();
+        DBIterator iterator = utxoService.iterator();
         iterator.seekToFirst();
 
         while (iterator.hasNext()){
