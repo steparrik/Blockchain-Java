@@ -1,9 +1,9 @@
 package org.blockchain_java.blockchain.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.*;
 import org.blockchain_java.blockchain.models.transaction.Transaction;
 
 import java.util.Date;
@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@ToString
 public class Block {
     private String hash;
     private String previousHash;
@@ -23,5 +22,17 @@ public class Block {
 
     public Block() {
         this.timestamp = new Date().getTime();
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return super.toString();
+        }
     }
 }
