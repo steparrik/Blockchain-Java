@@ -11,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class UtxoService implements DbService {
     private final DB utxoDb;
@@ -45,7 +50,7 @@ public class UtxoService implements DbService {
 
     public void removeSpentOutput(Transaction transaction){
         for(TransactionInput transactionInput : transaction.getInputs()){
-            utxoDb.delete((transactionInput.getHash()+":"+transactionInput.getOutput()).getBytes());
+            utxoDb.delete((transactionInput.getTransactionHash() + ":" + transactionInput.getOutput()).getBytes());
         }
     }
 
@@ -56,8 +61,32 @@ public class UtxoService implements DbService {
         for(int i = 0;i<transaction.getOutputs().size();i++){
             String key = hash+":"+i;
             TransactionOutput transactionOutput = new TransactionOutput(transaction.getOutputs().get(i).getAddress(),
-                    transaction.getOutputs().get(i).getAmount(), false);
+                    transaction.getOutputs().get(i).getAmount(), false, null);
             utxoDb.put(key.getBytes(), gson.toJson(transactionOutput).getBytes());
         }
+    }
+
+    public List<TransactionOutput> getOutputs(String address, BigDecimal amount) {
+        List<TransactionOutput> transactionOutputs = new ArrayList<>();
+        BigDecimal amountInUTXO = BigDecimal.ZERO;
+
+        DBIterator iterator = utxoDb.iterator();
+        iterator.seekToFirst();
+
+        while (iterator.hasNext()) {
+            Map.Entry<byte[], byte[]> entry = iterator.next();
+            String key = new String(entry.getKey());
+            TransactionOutput transactionOutput = gson.fromJson(new String(entry.getValue()), TransactionOutput.class);
+            if (transactionOutput.getAddress().equals(address) && !transactionOutput.getSpent()) {
+                transactionOutput.setKey(key);
+                amountInUTXO = amountInUTXO.add(transactionOutput.getAmount());
+                transactionOutputs.add(transactionOutput);
+                if (amountInUTXO.compareTo(amount) >= 0) {
+                    return transactionOutputs;
+                }
+            }
+
+        }
+        return new ArrayList<>();
     }
 }
