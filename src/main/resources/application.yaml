@@ -3,3 +3,5 @@ spring:
     name: blockchain_java
 hash:
   difficulty_prefix: "000"
+server:
+  port: 8080

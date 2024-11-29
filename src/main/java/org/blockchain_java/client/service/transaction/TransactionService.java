@@ -1,21 +1,16 @@
-package org.blockchain_java.blockchain.service.transaction;
+package org.blockchain_java.client.service.transaction;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.blockchain_java.blockchain.models.transaction.Transaction;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
-import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TransactionService {
@@ -50,8 +45,8 @@ public class TransactionService {
         return buffer.toString();
     }
 
-    public Transaction createTransaction(String from, String to, BigDecimal amount){
-        List<TransactionInput> transactionInputs = transactionInputService.createInputs(from, amount);
+    public Transaction createTransaction(String from, String to, BigDecimal amount, String pubKey, String privateKey){
+        List<TransactionInput> transactionInputs = transactionInputService.createInputs(from, amount, pubKey, privateKey);
         if(transactionInputs.isEmpty()){
             return null;
         }

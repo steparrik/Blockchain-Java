@@ -3,6 +3,7 @@ package org.blockchain_java.blockchain.models.transaction;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,8 +11,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @ToString
 public class TransactionInput {
-    private String hash;
+    private String transactionHash;
     private Long output;
     private String address;
+    private List<String> witness;
     private BigDecimal amount;
 }

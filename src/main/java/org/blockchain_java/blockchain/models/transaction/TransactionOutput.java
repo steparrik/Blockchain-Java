@@ -13,4 +13,5 @@ public class TransactionOutput {
     private String address;
     private BigDecimal amount;
     private Boolean spent = false;
+    private String key;
 }
