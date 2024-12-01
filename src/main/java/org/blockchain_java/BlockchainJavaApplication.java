@@ -40,36 +40,38 @@ public class BlockchainJavaApplication {
 			Transaction transaction = transactionService.createTransaction(from, to, new BigDecimal(amount),
 					pubKey, privateKey);
 
-			if(transaction == null){
-				System.out.println("Недостаточно средств");
-				continue;
-			}
+//			if(transaction == null){
+//				System.out.println("Недостаточно средств");
+//				continue;
+//			}
 
-			blockService.generateBlock(Collections.singletonList(transaction));
+			System.out.println(transaction);
 
-			DBIterator iterator = utxoService.iterator();
-			iterator.seekToFirst();
-
-			while (iterator.hasNext()){
-				Map.Entry<byte[], byte[]> entry = iterator.next();
-				String key = new String(entry.getKey());
-				TransactionOutput transactionOutput = gson.fromJson(new String(entry.getValue()), TransactionOutput.class);
-				System.out.println(transactionOutput);
-			}
-
-			DBIterator iterator1 = blockService.iterator();
-			iterator1.seekToFirst();
-
-			while (iterator1.hasNext()){
-				Map.Entry<byte[], byte[]> entry = iterator1.next();
-				String key = new String(entry.getKey());
-				if(key.equals("last")){
-					System.out.println(new String(entry.getValue()));
-				}else {
-					Block block = gson.fromJson(new String(entry.getValue()), Block.class);
-					System.out.println(block);
-				}
-			}
+//			blockService.generateBlock(Collections.singletonList(transaction));
+//
+//			DBIterator iterator = utxoService.iterator();
+//			iterator.seekToFirst();
+//
+//			while (iterator.hasNext()){
+//				Map.Entry<byte[], byte[]> entry = iterator.next();
+//				String key = new String(entry.getKey());
+//				TransactionOutput transactionOutput = gson.fromJson(new String(entry.getValue()), TransactionOutput.class);
+//				System.out.println(transactionOutput);
+//			}
+//
+//			DBIterator iterator1 = blockService.iterator();
+//			iterator1.seekToFirst();
+//
+//			while (iterator1.hasNext()){
+//				Map.Entry<byte[], byte[]> entry = iterator1.next();
+//				String key = new String(entry.getKey());
+//				if(key.equals("last")){
+//					System.out.println(new String(entry.getValue()));
+//				}else {
+//					Block block = gson.fromJson(new String(entry.getValue()), Block.class);
+//					System.out.println(block);
+//				}
+//			}
 		}
 
 	}

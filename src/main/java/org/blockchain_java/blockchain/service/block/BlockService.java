@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.blockchain_java.blockchain.models.Block;
 import org.blockchain_java.blockchain.models.transaction.Transaction;
 import org.blockchain_java.blockchain.models.transaction.TransactionInput;
+import org.blockchain_java.blockchain.models.transaction.TransactionOutput;
 import org.blockchain_java.blockchain.service.DbService;
 import org.blockchain_java.blockchain.service.utxo.UtxoService;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -20,7 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BlockService implements DbService {
@@ -147,14 +150,25 @@ public class BlockService implements DbService {
     public static String bytesToHex(byte[] bytes) {
         return Hex.toHexString(bytes);
     }
-//
-//    public List<String> generateWitness(String privateKey, String pubKey, String transactionHash, String address, BigDecimal amount){
-//        List<String> witness = new ArrayList<>(2);
-//        witness.add(pubKey);
-//        witness.add(signData(transactionHash + address + amount, privateKey));
-//        return witness;
-//    }
 
+    public List<Block> getBlockchain(){
+        byte[] bytesOfLastBlockHash = blockchainDb.get("last".getBytes());
+        if(bytesOfLastBlockHash == null){
+            return new LinkedList<>();
+        }
+
+        String lastBlockHash = gson.fromJson(new String(bytesOfLastBlockHash), String.class);
+        List<Block> blockchain = new LinkedList<>();
+        Block block = gson.fromJson(new String(blockchainDb.get(lastBlockHash.getBytes())), Block.class);
+
+        while (!block.getPreviousHash().equals("0")){
+            blockchain.add(block);
+            block = gson.fromJson(new String(blockchainDb.get(block.getPreviousHash().getBytes())), Block.class);
+        }
+
+        blockchain.add(block);
+        return blockchain;
+    }
     public void generateBlock(List<Transaction> transactions) throws Exception {
         Block newBlock;
 
