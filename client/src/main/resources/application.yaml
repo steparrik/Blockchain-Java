@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: blockchain_client
+server:
+  port: 8082

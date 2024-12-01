@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: blockchain
+hash:
+  difficulty_prefix: "000"
+server:
+  port: 8080
