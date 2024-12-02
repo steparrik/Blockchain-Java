@@ -15,7 +15,7 @@ public class UtxoDbConfig {
     public DB utxolDb() throws Exception {
         Options options = new Options();
         options.createIfMissing(true);
-        File dbFile = new File("data/utxo");
+        File dbFile = new File("blockchainData/utxo");
         if (!dbFile.exists()) {
             dbFile.mkdirs();
         }

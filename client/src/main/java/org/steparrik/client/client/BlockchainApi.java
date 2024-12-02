@@ -15,7 +15,10 @@ import java.util.List;
 @FeignClient(name = "blockchain", url = "http://localhost:8080/v1/blockchain/api/")
 public interface BlockchainApi {
     @GetMapping
-    List<Block> getAllBlockchain(@RequestParam(required = false) String address);
+    List<Block> getAllBlockchain();
+
+    @PostMapping("/add-test-utxo")
+    void addTestOutput(@RequestParam(required = true) String address);
 
     @GetMapping("/utxo/{address}")
     List<TransactionOutput> getOutputs(@PathVariable String address, @RequestParam(required = true) BigDecimal amount);

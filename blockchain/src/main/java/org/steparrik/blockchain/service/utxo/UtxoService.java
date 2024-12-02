@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UtxoService implements DbService {
@@ -82,6 +83,12 @@ public class UtxoService implements DbService {
                 amountInUTXO = amountInUTXO.add(transactionOutput.getAmount());
                 transactionOutputs.add(transactionOutput);
                 if (amountInUTXO.compareTo(amount) >= 0) {
+                    transactionOutputs.stream().map(tO -> {
+                        tO.setSpent(true);
+                        utxoDb.put(tO.getKey().getBytes(), gson.toJson(tO).getBytes());
+                        return tO;
+                    }).collect(Collectors.toCollection(ArrayList::new));
+                    System.out.println(transactionOutputs);
                     return transactionOutputs;
                 }
             }
