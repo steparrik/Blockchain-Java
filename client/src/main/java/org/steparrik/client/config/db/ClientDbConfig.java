@@ -1,4 +1,4 @@
-package org.steparrik.blockchain.config;
+package org.steparrik.client.config.db;
 
 import org.fusesource.leveldbjni.JniDBFactory;
 import org.iq80.leveldb.DB;
@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 
 @Configuration
-public class BlockchainDbConfig {
+public class ClientDbConfig {
 
-    @Bean(name = "blockchainDb")
-    public DB blockchainDb() throws Exception {
+    @Bean
+    public DB clientDb() throws Exception {
         Options options = new Options();
         options.createIfMissing(true);
-        File dbFile = new File("blockchainData/blockchain");
+        File dbFile = new File("clientData");
         if (!dbFile.exists()) {
             dbFile.mkdirs();
         }

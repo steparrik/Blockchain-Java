@@ -28,8 +28,7 @@ public class BlockchainController {
     }
 
     @GetMapping
-    public List<Block> getAllBlockchain(@RequestParam(required = false) String address){
-        utxoService.put("hash:0", gson.toJson(new TransactionOutput(address, new BigDecimal(1000), false, null)));
+    public List<Block> getAllBlockchain(){
         return blockService.getBlockchain();
     }
 
@@ -42,5 +41,11 @@ public class BlockchainController {
     public void sendTransaction(@RequestBody Transaction transaction)  {
         blockService.generateBlock(Collections.singletonList(transaction));
     }
+
+    @PostMapping("/add-test-utxo")
+    public void addTestUtxo(@RequestParam(required = true) String address){
+        utxoService.put("hash:0", gson.toJson(new TransactionOutput(address, new BigDecimal(1000), false, null)));
+    }
+
 
 }

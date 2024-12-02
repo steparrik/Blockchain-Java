@@ -31,14 +31,6 @@ public class TransactionOutputService {
                 .map(TransactionInput::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<TransactionOutput> transactionOutputs = new ArrayList<>();
-//        for(TransactionInput transactionInput : transactionInputs){
-//            String key = transactionInput.getTransactionHash()+":"+transactionInput.getOutput();
-//            if(utxoService.get(key) != null){
-//                TransactionOutput transactionOutput = gson.fromJson(new String(utxoService.get(key)), TransactionOutput.class);
-//                transactionOutput.setSpent(true);
-//                utxoService.put(key, gson.toJson(transactionOutput));
-//            }
-//        } Позже посмторю так как эта часть нужна для работы нескольких нод, spent - флаг что нельзя трогать выходы, но так как сейчас проверка в блокчейне возмржно не надо будет
 
         TransactionOutput transactionOutputTo = new TransactionOutput(toAddress, amount, false, null);
         amountInInputs = amountInInputs.subtract(amount);
