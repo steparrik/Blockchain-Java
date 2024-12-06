@@ -1,22 +1,44 @@
-# BlockchainJava
+# Blockchain in Java
 
-**BlockchainJava** — проект, реализующий простую версию блокчейна на Java. Его цель — создать рабочий блокчейн, который можно будет использовать для базовых транзакций, майнинга, и дальнейшего расширения функциональности.
+This project is a simple blockchain implementation inspired by the principles of Bitcoin. It uses a **Proof of Work (PoW)** consensus mechanism and stores transactions in the **UTXO model**. The application provides:
 
-## О проекте
-Этот проект основывается на ключевых концепциях блокчейна, таких как хранение цепочки блоков, включающих информацию о транзакциях, защита данных, неизменность и прозрачность.
+- A **blockchain API** to interact with the blockchain.
+- A **console-based client** for creating accounts, signing transactions, and sending them.
 
-### Основные возможности
-- **Создание блоков и управление транзакциями** — в проекте заложена базовая структура для добавления блоков и работы с транзакциями.
-- **Использование LevelDB** — лёгкой и быстрой базы данных для хранения блоков и данных блокчейна.
-- **Планируемая поддержка клиента и узлов** — для взаимодействия с сетью, выполнения транзакций и майнинга.
+The stack includes **Java**, **Spring Boot**, and **LevelDB** for efficient data storage.
 
-## Текущие цели
-- Завершить **базовую реализацию блокчейна** и довести проект до рабочего состояния.
-- **Разработать клиента** для взаимодействия с блокчейном.
-- Поддержка **подключения нескольких узлов** для создания распределённой сети с возможностью совместного майнинга.
+---
 
-## Архитектура и технические детали
-Проект использует:
-- **Java | Spring** для основной логики блокчейна.
-- **LevelDB** для постоянного хранения блоков и данных.
-- Основные концепции безопасности, такие как неизменность данных и прозрачность транзакций.
+## Features
+
+### Blockchain API
+- Add new transactions and mine blocks.
+- Verify transactions using a **witness mechanism**.
+- Retrieve blockchain and UTXO data.
+
+### Client Console Application
+- Create accounts with key pair management.
+- Sign and submit transactions to the blockchain.
+- View account balances and blockchain data.
+
+### Core Features
+- **Consensus**: Implements the **Proof of Work (PoW)** algorithm.
+- **Data Storage**:
+  - **LevelDB** for lightweight and fast storage of blockchain and UTXO data.
+  - Local LevelDB for temporary storage of account data on the client.
+
+---
+
+## How It Works
+
+1. **Account Management**: Users create accounts with public-private key pairs. Account data is stored locally on the client.
+2. **Transaction Processing**: Transactions are signed by senders and verified using witnesses.
+3. **Proof of Work**: Miners solve cryptographic puzzles to validate blocks.
+4. **Data Persistence**: Blockchain and UTXO data are stored persistently in LevelDB.
+
+---
+
+## Tech Stack
+
+- **Java** with **Spring Boot** for the backend.
+- **LevelDB** for key-value data storage.
