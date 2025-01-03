@@ -23,7 +23,7 @@ public interface BlockchainApi {
     @GetMapping("/utxo/{address}")
     List<TransactionOutput> getOutputs(@PathVariable String address, @RequestParam(required = true) BigDecimal amount);
 
-    @PostMapping
+    @PostMapping("/transaction")
     void sendTransaction(@RequestBody Transaction transaction);
 
 }

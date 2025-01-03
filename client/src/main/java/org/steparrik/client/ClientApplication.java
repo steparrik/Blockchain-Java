@@ -84,10 +84,10 @@ public class ClientApplication {
                     String toAddress = sc.next();
                     System.out.println("Enter amount:");
                     String amountTokens = sc.next();
-                    System.out.println("Enter recipient's public key:");
+                    System.out.println("Enter sender's public key:");
                     String publicKey = sc.next();
                     System.out.println("WARNING: the private key will be used to sign the transaction (it will not go to the blockchain)\n" +
-                            "Enter recipient's private key:");
+                            "Enter sender's private key:");
                     String prKey = sc.next();
 
 

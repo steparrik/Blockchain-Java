@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class Block {
+    private DataType type;
     private String hash;
     private String previousHash;
     private List<Transaction> transactions;

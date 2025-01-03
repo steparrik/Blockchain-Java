@@ -3,6 +3,7 @@ package org.steparrik.client.service.transaction;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.steparrik.client.models.DataType;
 import org.steparrik.client.models.transaction.Transaction;
 import org.steparrik.client.models.transaction.TransactionInput;
 
@@ -51,7 +52,7 @@ public class TransactionService {
             System.out.println("Not enough funds");
             return null;
         }
-        Transaction transaction = new Transaction(
+        Transaction transaction = new Transaction(DataType.TRANSACTION,
                 "0",
                 transactionInputs,
                 transactionOutputService.createOutputs(from, to, amount, transactionInputs),
