@@ -1,0 +1,51 @@
+services:
+  blockchain1:
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    environment:
+      SERVER_PORT: 8080
+      TCP_PORT: 9000
+  blockchain2:
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+    ports:
+      - "8081:8080"
+      - "9001:9000"
+    environment:
+      SERVER_PORT: 8080
+      TCP_PORT: 9000
+  blockchain3:
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+    ports:
+      - "8082:8080"
+      - "9002:9000"
+    environment:
+      SERVER_PORT: 8080
+      TCP_PORT: 9000
+  blockchain4:
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+    ports:
+      - "8083:8080"
+      - "9003:9000"
+    environment:
+      SERVER_PORT: 8080
+      TCP_PORT: 9000
+  blockchain5:
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+    ports:
+      - "8084:8080"
+      - "9004:9000"
+    environment:
+      SERVER_PORT: 8080
+      TCP_PORT: 9000

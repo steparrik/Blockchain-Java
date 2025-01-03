@@ -2,6 +2,8 @@ spring:
   application:
     name: blockchain
 hash:
-  difficulty_prefix: "00000"
+  difficulty_prefix: "0000"
 server:
-  port: 8080
+  port: ${SERVER_PORT}
+tcp:
+  port: ${TCP_PORT}

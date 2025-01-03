@@ -1,6 +1,5 @@
 package org.steparrik.blockchain.api;
 
-import ch.qos.logback.core.model.INamedModel;
 import com.google.gson.Gson;
 import org.steparrik.blockchain.models.Block;
 import org.steparrik.blockchain.models.transaction.Transaction;
@@ -22,6 +21,8 @@ public class BlockchainController {
     private final UtxoService utxoService;
     private final Gson gson;
     private final MempoolService mempoolService;
+    private final TcpClient tcpClient;
+
 
     @Autowired
     public BlockchainController(BlockService blockService, UtxoService utxoService, Gson gson, MempoolService mempoolService) {
@@ -29,6 +30,7 @@ public class BlockchainController {
         this.utxoService = utxoService;
         this.gson = gson;
         this.mempoolService = mempoolService;
+        this.tcpClient = new TcpClient(List.of("blockchain1:9000", "blockchain2:9000", "blockchain3:9000", "blockchain4:9000", "blockchain5:9000"));
     }
 
     @GetMapping
@@ -37,13 +39,25 @@ public class BlockchainController {
     }
 
     @GetMapping("/utxo/{address}")
-    public List<TransactionOutput> getOutputs(@PathVariable String address, @RequestParam(required = true) BigDecimal amount){
-        return utxoService.getOutputs(address, amount);
+    public List<TransactionOutput> getAndMarkOutputs(@PathVariable String address, @RequestParam(required = false) BigDecimal amount){
+        List<TransactionOutput> transactionOutputs;
+        if(amount == null){
+            transactionOutputs = utxoService.getOutputs(address);
+        }else {
+            transactionOutputs = utxoService.getAndMarkOutputs(address, amount);
+        }
+        return transactionOutputs;
     }
 
     @PostMapping("/transaction")
     public void sendTransaction(@RequestBody Transaction transaction)  {
+        tcpClient.sendTransactionToAll(gson.toJson(transaction));
         mempoolService.addTransaction(transaction);
+    }
+
+    @GetMapping("/transaction")
+    public List<Transaction> getMempool()  {
+        return mempoolService.getMempool().values().stream().toList();
     }
 
     @PostMapping("/add-test-utxo")
@@ -56,15 +70,6 @@ public class BlockchainController {
         Map<String, Transaction> mempool = mempoolService.getMempool();
         List<Transaction> transactions = new ArrayList<>(mempool.values());
         blockService.generateBlock(transactions);
-    }
-
-    @GetMapping("/testMessage")
-    public void sendTransaction(@RequestParam String message)  {
-        List<String> list = new ArrayList<>();
-        list.add("127.0.0.1:9001");
-        list.add("127.0.0.1:9002");
-        TcpClient tcpClient = new TcpClient(list);
-        tcpClient.sendMessageToAll(message);
     }
 
 }

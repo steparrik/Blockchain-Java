@@ -67,7 +67,25 @@ public class UtxoService implements DbService {
         }
     }
 
-    public List<TransactionOutput> getOutputs(String address, BigDecimal amount) {
+    public List<TransactionOutput> getOutputs(String address){
+        List<TransactionOutput> transactionOutputs = new ArrayList<>();
+        DBIterator iterator = utxoDb.iterator();
+        iterator.seekToFirst();
+
+        while (iterator.hasNext()) {
+            Map.Entry<byte[], byte[]> entry = iterator.next();
+            String key = new String(entry.getKey());
+            TransactionOutput transactionOutput = gson.fromJson(new String(entry.getValue()), TransactionOutput.class);
+            if (transactionOutput.getAddress().equals(address)) {
+                transactionOutput.setKey(key);
+                transactionOutputs.add(transactionOutput);
+            }
+
+        }
+        return transactionOutputs;
+    }
+
+    public List<TransactionOutput> getAndMarkOutputs(String address, BigDecimal amount) {
         List<TransactionOutput> transactionOutputs = new ArrayList<>();
         BigDecimal amountInUTXO = BigDecimal.ZERO;
 

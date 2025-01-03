@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.springframework.scheduling.annotation.Async;
 import org.steparrik.blockchain.models.Block;
+import org.steparrik.blockchain.models.DataType;
 import org.steparrik.blockchain.models.transaction.Transaction;
 import org.steparrik.blockchain.models.transaction.TransactionInput;
 import org.steparrik.blockchain.service.DbService;
 import org.steparrik.blockchain.service.mempool.MempoolService;
 import org.steparrik.blockchain.service.utxo.UtxoService;
+import org.steparrik.blockchain.tcp.TcpClient;
 import org.steparrik.blockchain.utils.exception.ValidateTransactionException;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -34,6 +36,7 @@ public class BlockService implements DbService {
     private final UtxoService utxoService;
     private final Gson gson;
     private final MempoolService mempoolService;
+    private final TcpClient tcpClient;
 
     @Autowired
     public BlockService(@Qualifier("blockchainDb") DB blockchainDb, UtxoService utxoService, Gson gson, MempoolService mempoolService){
@@ -41,6 +44,8 @@ public class BlockService implements DbService {
         this.utxoService = utxoService;
         this.gson = gson;
         this.mempoolService = mempoolService;
+        this.tcpClient = new TcpClient(List.of("blockchain1:9000", "blockchain2:9000", "blockchain3:9000", "blockchain4:9000", "blockchain5:9000"));
+
     }
 
     @Override
@@ -73,9 +78,9 @@ public class BlockService implements DbService {
     @SneakyThrows
     public String calculateBlockHash(Block block) {
         String dataToHash = block.getPreviousHash()
-                + Long.toString(block.getTimestamp())
-                + Long.toString(block.getNonce())
-                + Long.toString(block.getIndex())
+                + block.getTimestamp()
+                + block.getNonce()
+                + block.getIndex()
                 + block.getTransactions().toString();
         MessageDigest digest = null;
         byte[] bytes = null;
@@ -93,6 +98,7 @@ public class BlockService implements DbService {
 
     public Block generateGenesisBlock(List<Transaction> transactions){
         Block block = new Block();
+        block.setType(DataType.BLOCK);
         block.setIndex(0);
         block.setPreviousHash("0");
         block.setHash("0");
@@ -153,10 +159,13 @@ public class BlockService implements DbService {
             newBlock.setHash("0");
             newBlock.setPreviousHash(previousHash);
             newBlock.setIndex(index+1);
+            newBlock.setType(DataType.BLOCK);
         }
 
         addNewBlock(newBlock);
+
         mempoolService.removeTransactions(transactions.stream().map(Transaction::getHash).toList());
+        tcpClient.sendTransactionToAll(gson.toJson(newBlock));
     }
 
 
