@@ -2,3 +2,5 @@
 /.idea/
 /blockchainData/
 /clientData/
+/client/target/
+/blockchain/target/
